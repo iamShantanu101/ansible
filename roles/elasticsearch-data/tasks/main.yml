@@ -1,2 +1,8 @@
 ---
-- include: configure-elasticsearch-data.yml
+- name: Configure elasticsearch
+  lineinfile: dest="/etc/elasticsearch/elasticsearch.yml" regexp="{{item.regexp}}" line="{{item.line}}" state=present backup=yes
+  with_items:
+    - { regexp: 'node.master', line: 'node.master: false' }
+    - { regexp: 'node.data', line: 'node.data: true' }
+  notify: elasticsearch restart
+  when: "'elasticsearch-data' in group_names"
